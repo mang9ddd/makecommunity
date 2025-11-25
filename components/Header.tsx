@@ -4,10 +4,19 @@ import { createClient } from '@/lib/supabase/server'
 import { signOut } from '@/app/actions/auth'
 
 export default async function Header() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
+  } catch (error) {
+    console.error('Error getting user in Header:', error)
+    // 환경 변수가 없거나 Supabase 연결 실패 시에도 헤더는 표시
+    user = null
+  }
 
   return (
     <header className="bg-[#1a1a1b] border-b border-[#343536] sticky top-0 z-50">
