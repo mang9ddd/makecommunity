@@ -13,6 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "MakeCommunity - 커뮤니티 게시판",
   description: "Reddit 스타일의 커뮤니티 게시판",
