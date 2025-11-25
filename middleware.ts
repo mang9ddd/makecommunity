@@ -1,4 +1,4 @@
-import { type NextRequest } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     // 에러가 발생해도 요청은 계속 진행
     console.error('Error in middleware:', error)
-    return new Response(null, { status: 200 })
+    return NextResponse.next({ request })
   }
 }
 
