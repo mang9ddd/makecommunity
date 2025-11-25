@@ -11,14 +11,14 @@ export async function createPost(formData: FormData) {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: '로그인이 필요합니다.' }
+    redirect('/login')
   }
 
   const title = formData.get('title') as string
   const content = formData.get('content') as string
 
   if (!title || !content) {
-    return { error: '제목과 내용을 입력해주세요.' }
+    redirect('/write?error=' + encodeURIComponent('제목과 내용을 입력해주세요.'))
   }
 
   const { data, error } = await supabase
@@ -37,12 +37,12 @@ export async function createPost(formData: FormData) {
       code: error.code,
       details: error.details,
     })
-    return { error: error.message }
+    redirect('/write?error=' + encodeURIComponent(error.message))
   }
 
   if (!data || !data.id) {
     console.error('Post created but no data returned')
-    return { error: '게시글이 생성되었지만 데이터를 가져올 수 없습니다.' }
+    redirect('/write?error=' + encodeURIComponent('게시글이 생성되었지만 데이터를 가져올 수 없습니다.'))
   }
 
   // 홈 페이지 revalidate (게시글 목록 갱신)
