@@ -51,10 +51,18 @@ async function getUserProfile(userId: string) {
 }
 
 export default async function ProfilePage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
+  } catch (error) {
+    console.error('Error getting user in ProfilePage:', error)
+    // 에러 발생 시 로그인 페이지로 리다이렉트
+    redirect('/login')
+  }
 
   if (!user) {
     redirect('/login')

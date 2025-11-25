@@ -96,10 +96,19 @@ async function getPost(id: string) {
 
 export default async function PostPage({ params }: { params: { id: string } }) {
   const post = await getPost(params.id)
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  
+  let user = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
+  } catch (error) {
+    console.error('Error getting user in PostPage:', error)
+    // 환경 변수가 없거나 Supabase 연결 실패 시에도 게시글은 표시
+    user = null
+  }
 
   if (!post) {
     notFound()

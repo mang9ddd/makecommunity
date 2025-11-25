@@ -89,10 +89,19 @@ async function getPosts() {
 
 export default async function HomePage() {
   const posts = await getPosts()
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  
+  let user = null
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
+  } catch (error) {
+    console.error('Error getting user in HomePage:', error)
+    // 환경 변수가 없거나 Supabase 연결 실패 시에도 페이지는 표시
+    user = null
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
