@@ -60,7 +60,7 @@ export async function updatePost(postId: string, formData: FormData) {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: '로그인이 필요합니다.' }
+    redirect('/login')
   }
 
   const title = formData.get('title') as string
@@ -73,7 +73,8 @@ export async function updatePost(postId: string, formData: FormData) {
     .eq('user_id', user.id)
 
   if (error) {
-    return { error: error.message }
+    // 에러가 발생하면 에러 페이지로 리다이렉트
+    redirect(`/post/${postId}/edit?error=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath(`/post/${postId}`)
