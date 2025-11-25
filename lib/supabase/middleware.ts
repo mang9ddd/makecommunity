@@ -13,7 +13,8 @@ export async function updateSession(request: NextRequest) {
     console.error('Missing Supabase environment variables')
     console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing')
     console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing')
-    throw new Error('Missing Supabase environment variables. Please check your .env.local file.')
+    // 환경 변수가 없으면 그냥 다음 응답을 반환 (오류 발생 방지)
+    return NextResponse.next({ request })
   }
 
   const supabase = createServerClient(
@@ -45,12 +46,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // 로그인하지 않은 사용자도 홈, 검색, 게시글 보기 등은 가능하도록 허용
+  const publicPaths = ['/', '/login', '/signup', '/search']
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname) || 
+                       request.nextUrl.pathname.startsWith('/post/')
+
+  // 로그인이 필요한 페이지만 체크 (프로필, 글쓰기, 수정 등)
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/signup')
+    !isPublicPath
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // 로그인이 필요한 페이지에 접근 시 로그인 페이지로 리다이렉트
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
