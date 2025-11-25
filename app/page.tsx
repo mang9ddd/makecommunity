@@ -4,6 +4,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import PostVoteButtons from '@/components/PostVoteButtons'
 
+export const dynamic = 'force-dynamic'
+
 async function getPosts() {
   try {
     const supabase = await createClient()

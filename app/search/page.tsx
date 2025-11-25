@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import SearchForm from '@/components/SearchForm'
 
 async function searchPosts(searchTerm: string) {
@@ -56,7 +57,9 @@ export default async function SearchPage({
     <div className="max-w-4xl mx-auto px-4 py-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white mb-4">검색</h1>
-        <SearchForm initialValue={searchTerm} />
+        <Suspense fallback={<div className="text-white">로딩 중...</div>}>
+          <SearchForm initialValue={searchTerm} />
+        </Suspense>
       </div>
 
       {searchTerm && (

@@ -10,7 +10,8 @@ interface SearchFormProps {
 export default function SearchForm({ initialValue = '' }: SearchFormProps) {
   const [searchTerm, setSearchTerm] = useState(initialValue)
   const router = useRouter()
-  const searchParams = useSearchParams()
+  // searchParams는 현재 사용하지 않지만, 필요시 Suspense로 감싸진 컴포넌트에서 사용 가능
+  // const searchParams = useSearchParams()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
